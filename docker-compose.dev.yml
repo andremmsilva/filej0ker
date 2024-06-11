@@ -32,3 +32,4 @@ services:
           path: ./server/package.json
     environment:
       - NODE_ENV=development
+      - POSTGRES_URL=postgres://postgres:postgres@db:5432/fjdb
