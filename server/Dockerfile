@@ -5,4 +5,4 @@ COPY . .
 RUN ["npm", "install"]
 
 EXPOSE 3000
-ENTRYPOINT ["/bin/sh", "-c", "npm run dev"]
+CMD ["/bin/sh", "-c", "npm run dev"]

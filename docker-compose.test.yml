@@ -1,16 +1,16 @@
-name: "filej0ker-dev"
+name: "filej0ker-test"
 services:
   db:
     image: "postgres:latest"
-    container_name: filej0ker-dev-db
+    container_name: filej0ker-test-db
     ports: 
       - "5432:5432"
     restart: unless-stopped
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=test
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=fjdb
+      - POSTGRES_DB=testdb
     volumes:
       - ./data:/docker-entrypoint-initdb.d
     
@@ -18,10 +18,10 @@ services:
     build:
       context: ./server
       target: development
-    container_name: filej0ker-dev-backend
+    container_name: filej0ker-test-backend
     ports: 
       - "5000:5000"
-    restart: unless-stopped
+    command: npm test
     depends_on:
       - db
     develop:
@@ -33,5 +33,5 @@ services:
           target: /app
     environment:
       - EXPRESS_PORT=5000
-      - NODE_ENV=development
-      - POSTGRES_URL=postgres://postgres:postgres@db:5432/fjdb
+      - NODE_ENV=test
+      - POSTGRES_URL=postgres://postgres:postgres@db:5432/testdb

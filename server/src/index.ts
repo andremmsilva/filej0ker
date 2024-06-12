@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { createApp } from './createApp';
 import { pool } from './middleware/db';
 const PORT = process.env.EXPRESS_PORT;
