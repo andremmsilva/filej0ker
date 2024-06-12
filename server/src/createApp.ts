@@ -1,7 +1,9 @@
 import express from "express";
 import { authRouter } from "./routes/auth";
+import { verifyEnvs } from "./utils/env";
 
 export function createApp() {
+  verifyEnvs();
   const app = express();
   app.use(express.json());
   app.use('/auth', authRouter);
