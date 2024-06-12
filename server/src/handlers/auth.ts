@@ -8,6 +8,7 @@ import { pool } from '../middleware/db';
 import { AppError } from '../models/appError';
 import bcrypt from 'bcrypt';
 import { BCRYPT_SALT_ROUNDS } from '../utils/constants';
+import { generateAccessToken, generateRefreshToken } from '../utils/tokens';
 
 export async function handleLogin(
   req: Request<{}, {}, LoginRequestDTO>,
@@ -45,8 +46,8 @@ export async function handleLogin(
             active: queryResult.rows[0].active,
           },
           auth: {
-            accessToken: '',
-            refreshToken: '',
+            accessToken: generateAccessToken(queryResult.rows[0].email),
+            refreshToken: generateRefreshToken(queryResult.rows[0].email),
           },
         });
       }
@@ -58,8 +59,7 @@ export async function handleLogin(
 }
 
 export function handleLogout(req: Request, res: Response) {
-  console.log(req.userEmail);
-  res.status(200).json({"message": "Success"});
+  res.status(200).json({ message: 'Success' });
 }
 
 export async function handleSignup(
@@ -104,8 +104,8 @@ export async function handleSignup(
 
           res.status(201).json({
             auth: {
-              accessToken: '',
-              refreshToken: '',
+              accessToken: generateAccessToken(result.rows[0].email),
+              refreshToken: generateRefreshToken(result.rows[0].email),
             },
             user: {
               userId: result.rows[0].user_id,

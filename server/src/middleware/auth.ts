@@ -1,11 +1,11 @@
 // middleware/auth.js
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { JwtPayload, verify } from 'jsonwebtoken';
 
 declare global {
   namespace Express {
     interface Request {
-      userEmail?: string | JwtPayload;
+      user?: string | JwtPayload;
     }
   }
 }
@@ -20,7 +20,7 @@ export function authenticateToken(
 
   verify(token, process.env.JWT_SECRET!, (err, user) => {
     if (err) return res.sendStatus(403);
-    req.userEmail = user;
+    req.user = user;
     next();
   });
 }
