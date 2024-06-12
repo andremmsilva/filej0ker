@@ -58,6 +58,7 @@ export async function handleLogin(
 }
 
 export function handleLogout(req: Request, res: Response) {
+  console.log(req.userEmail);
   res.status(200).json({"message": "Success"});
 }
 

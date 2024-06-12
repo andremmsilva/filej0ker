@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
-import { Request, Response, NextFunction } from 'express-serve-static-core';
+import { Request, Response, NextFunction } from 'express';
 
 function validationMiddleware<T>(
   type: any
