@@ -7,4 +7,26 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_role VARCHAR(50) NOT NULL,
     active BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS user_contacts (
+    id SERIAL PRIMARY KEY,
+    first_id INTEGER REFERENCES users(user_id) NOT NULL,
+    second_id INTEGER REFERENCES users(user_id) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    blocked BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS contact_invites (
+    id SERIAL PRIMARY KEY,
+    from_id INTEGER REFERENCES users(user_id) NOT NULL,
+    to_id INTEGER REFERENCES users(user_id) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(user_id) NOT NULL,
+    msg VARCHAR(255) NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE
 )
