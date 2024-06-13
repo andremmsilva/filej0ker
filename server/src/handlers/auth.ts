@@ -3,7 +3,7 @@ import {
   BaseAuthResponse,
   LoginRequestDTO,
   RegisterRequestDTO,
-} from '../dtos/user.dto';
+} from '../dtos/auth.dto';
 import { pool } from '../middleware/db';
 import { AppError } from '../models/appError';
 import bcrypt from 'bcrypt';
