@@ -1,5 +1,16 @@
 import { IsEmail, IsString, Length } from "class-validator";
 
+export type UserSQL = {
+  userid: number;
+  fullname: string;
+  email: string;
+  username: string;
+  passwordhash: string;
+  createdat: Date;
+  userrole: string;
+  active: boolean;
+}
+
 abstract class BaseUserRequest {
   @IsEmail()
   email!: string;
@@ -39,4 +50,16 @@ export class BaseJWTResponse {
 export class BaseAuthResponse {
   user!: BaseUserResponse;
   auth!: BaseJWTResponse;
+}
+
+export function sqlToBaseUserResponse(user: UserSQL): BaseUserResponse {
+  return {
+    userId: user.userid,
+    email: user.email,
+    username: user.username,
+    fullName: user.fullname,
+    createdAt: user.createdat,
+    userRole: user.userrole,
+    active: user.active
+  };
 }
