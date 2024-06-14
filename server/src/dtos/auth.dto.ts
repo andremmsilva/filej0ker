@@ -14,7 +14,7 @@ export class LoginRequestDTO extends BaseUserRequest {
 export class RegisterRequestDTO extends LoginRequestDTO {
   @IsString()
   @Length(3, 32)
-  userName!: string;
+  username!: string;
 
   @IsString()
   @Length(5, 255)
@@ -24,7 +24,7 @@ export class RegisterRequestDTO extends LoginRequestDTO {
 export class BaseUserResponse {
   userId!: number;
   email!: string;
-  userName!: string;
+  username!: string;
   fullName!: string;
   createdAt!: Date;
   userRole!: string;

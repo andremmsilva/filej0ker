@@ -12,7 +12,7 @@ describe('signup', () => {
   const baseRequestBody: RegisterRequestDTO = {
     email: 'andre@test.com',
     fullName: 'André Silva',
-    userName: 'andremmsilva',
+    username: 'andremmsilva',
     password: 'testpassword',
   };
 
@@ -32,7 +32,7 @@ describe('signup', () => {
     const expectedUser: BaseUserResponse = {
       userId: expect.any(Number),
       email: 'andre@test.com',
-      userName: 'andremmsilva',
+      username: 'andremmsilva',
       fullName: 'André Silva',
       createdAt: expect.any(String),
       userRole: 'Free',
@@ -70,7 +70,7 @@ describe('signup', () => {
       ...baseRequestBody,
     };
 
-    requestBody.userName = 'a';
+    requestBody.username = 'a';
     const response = await request(app)
       .post('/auth/signup')
       .send(requestBody)
@@ -91,7 +91,7 @@ describe('signup', () => {
     expect(response.body).toHaveProperty('auth');
 
     const newRequestBody = { ...baseRequestBody };
-    newRequestBody.userName = 'differentUser';
+    newRequestBody.username = 'differentUser';
 
     response = await request(app)
       .post('/auth/signup')
