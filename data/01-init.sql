@@ -11,11 +11,11 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS user_contacts (
     id SERIAL PRIMARY KEY,
-    first_id INTEGER REFERENCES users(userId) NOT NULL,
-    second_id INTEGER REFERENCES users(userId) NOT NULL,
+    firstId INTEGER REFERENCES users(userId) NOT NULL,
+    secondId INTEGER REFERENCES users(userId) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     -- invited | friends | refused | blocked
-    contact_status VARCHAR(32) NOT NULL,
+    contactStatus VARCHAR(32) NOT NULL,
 );
 
 CREATE TABLE IF NOT EXISTS notifications (
