@@ -14,14 +14,8 @@ CREATE TABLE IF NOT EXISTS user_contacts (
     first_id INTEGER REFERENCES users(user_id) NOT NULL,
     second_id INTEGER REFERENCES users(user_id) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    blocked BOOLEAN DEFAULT FALSE
-);
-
-CREATE TABLE IF NOT EXISTS contact_invites (
-    id SERIAL PRIMARY KEY,
-    from_id INTEGER REFERENCES users(user_id) NOT NULL,
-    to_id INTEGER REFERENCES users(user_id) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    -- invited | friends | refused | blocked
+    contact_status VARCHAR(32) NOT NULL,
 );
 
 CREATE TABLE IF NOT EXISTS notifications (
