@@ -3,6 +3,7 @@ import {
   BaseAuthResponse,
   LoginRequestDTO,
   RegisterRequestDTO,
+  UserSQL,
 } from '../dtos/auth.dto';
 import { pool } from '../middleware/db';
 import { AppError } from '../models/appError';
@@ -16,7 +17,7 @@ export async function handleLogin(
   next: NextFunction
 ) {
   try {
-    const queryResult = await pool.query('SELECT * FROM users WHERE email=$1', [
+    const queryResult = await pool.query<UserSQL>('SELECT * FROM users WHERE email=$1', [
       req.body.email,
     ]);
     if (!queryResult.rowCount || queryResult.rowCount === 0) {
@@ -25,7 +26,7 @@ export async function handleLogin(
 
     bcrypt.compare(
       req.body.password,
-      queryResult.rows[0].passwordHash,
+      queryResult.rows[0].passwordhash,
       (err, result) => {
         if (err) {
           throw err;
@@ -37,12 +38,12 @@ export async function handleLogin(
 
         res.status(200).json({
           user: {
-            userId: queryResult.rows[0].userId,
+            userId: queryResult.rows[0].userid,
             email: queryResult.rows[0].email,
             username: queryResult.rows[0].username,
-            fullName: queryResult.rows[0].fullName,
-            createdAt: queryResult.rows[0].createdAt,
-            userRole: queryResult.rows[0].userRole,
+            fullName: queryResult.rows[0].fullname,
+            createdAt: queryResult.rows[0].createdat,
+            userRole: queryResult.rows[0].userrole,
             active: queryResult.rows[0].active,
           },
           auth: {

@@ -2,6 +2,7 @@ import express from "express";
 import { authRouter } from "./routes/auth";
 import { verifyEnvs } from "./utils/env";
 import { loadEnv } from "./loadEnv";
+import { usersRouter } from "./routes/users";
 
 export function createApp() {
   loadEnv();
@@ -9,6 +10,7 @@ export function createApp() {
   const app = express();
   app.use(express.json());
   app.use('/auth', authRouter);
+  app.use('/users', usersRouter);
 
   // Error handling middleware should be the last middleware
   app.use(
