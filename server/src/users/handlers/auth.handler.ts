@@ -1,15 +1,15 @@
+import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
 import {
   BaseAuthResponse,
   LoginRequestDTO,
   RegisterRequestDTO,
   UserSQL,
-} from '../dtos/auth.dto';
-import { pool } from '../middleware/db';
-import { AppError } from '../models/appError';
-import bcrypt from 'bcrypt';
-import { BCRYPT_SALT_ROUNDS } from '../utils/constants';
-import { generateAccessToken, generateRefreshToken } from '../utils/tokens';
+} from '../dto/auth.dto';
+import { pool } from '../../middleware/db';
+import { AppError } from '../../errors/appError';
+import { BCRYPT_SALT_ROUNDS } from '../../utils/constants';
+import { generateAccessToken, generateRefreshToken } from '../../utils/tokens';
 
 export async function handleLogin(
   req: Request<{}, {}, LoginRequestDTO>,

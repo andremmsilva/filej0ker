@@ -1,5 +1,5 @@
 import { describe, test } from '@jest/globals';
-import { BaseUserResponse, RegisterRequestDTO } from '../../src/dtos/auth.dto';
+import { BaseUserResponse, RegisterRequestDTO } from '../../src/users/dto/auth.dto';
 import request from 'supertest';
 import { Express } from 'express';
 import { createApp } from '../../src/createApp';

@@ -1,6 +1,6 @@
 import express from 'express';
-import { handleProfile, handleSearch } from '../handlers/users';
-import { authenticateToken } from '../middleware/auth';
+import { authenticateToken } from '../../middleware/auth';
+import { handleProfile, handleSearch } from '../handlers/users.handler';
 
 const usersRouter = express.Router();
 

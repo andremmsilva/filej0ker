@@ -1,12 +1,9 @@
 import { Request, Response } from 'express';
-import { SearchRequestDTO } from '../dtos/users.dto';
-import {
-  BaseUserResponse,
-  UserSQL,
-  sqlToBaseUserResponse,
-} from '../dtos/auth.dto';
-import { pool } from '../middleware/db';
-import { AppError } from '../models/appError';
+import { SearchRequestDTO } from '../dto/users.dto';
+import { BaseUserResponse, UserSQL } from '../dto/auth.dto';
+import { pool } from '../../middleware/db';
+import { AppError } from '../../errors/appError';
+import { UserService } from '../data/users.data';
 
 export async function handleSearch(
   req: Request<{}, {}, SearchRequestDTO>,
@@ -19,7 +16,7 @@ export async function handleSearch(
       [`%${query}%`]
     );
 
-    res.json(result.rows.map((value) => sqlToBaseUserResponse(value)));
+    res.json(result.rows.map((value) => UserService.sqlToBaseUserResponse(value)));
   } catch (error) {
     console.error(error);
     throw new AppError('Error getting search results', 500);
@@ -41,7 +38,7 @@ export async function handleProfile(
       [req.user.email]
     );
 
-    res.json(sqlToBaseUserResponse(result.rows[0]));
+    res.json(UserService.sqlToBaseUserResponse(result.rows[0]));
   } catch (error) {
     console.error(error);
     throw new AppError('Error getting search results', 500);

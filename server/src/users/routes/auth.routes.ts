@@ -1,8 +1,8 @@
 import express from 'express';
-import { handleLogin, handleLogout, handleSignup } from '../handlers/auth';
-import { validationMiddleware } from '../middleware/validationMiddleware';
-import { RegisterRequestDTO } from '../dtos/auth.dto';
-import { authenticateToken } from '../middleware/auth';
+import { handleLogin, handleLogout, handleSignup } from '../handlers/auth.handler';
+import { validationMiddleware } from '../../middleware/validationMiddleware';
+import { RegisterRequestDTO } from '../dto/auth.dto';
+import { authenticateToken } from '../../middleware/auth';
 
 const authRouter = express.Router();
 

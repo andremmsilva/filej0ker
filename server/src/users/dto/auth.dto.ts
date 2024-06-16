@@ -51,15 +51,3 @@ export class BaseAuthResponse {
   user!: BaseUserResponse;
   auth!: BaseJWTResponse;
 }
-
-export function sqlToBaseUserResponse(user: UserSQL): BaseUserResponse {
-  return {
-    userId: user.userid,
-    email: user.email,
-    username: user.username,
-    fullName: user.fullname,
-    createdAt: user.createdat,
-    userRole: user.userrole,
-    active: user.active
-  };
-}

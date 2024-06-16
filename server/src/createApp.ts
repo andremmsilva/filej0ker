@@ -1,8 +1,8 @@
 import express from "express";
-import { authRouter } from "./routes/auth";
+import { authRouter } from "./users/routes/auth.routes";
 import { verifyEnvs } from "./utils/env";
 import { loadEnv } from "./loadEnv";
-import { usersRouter } from "./routes/users";
+import { usersRouter } from "./users/routes/users.routes";
 
 export function createApp() {
   loadEnv();
