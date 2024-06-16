@@ -15,12 +15,12 @@ CREATE TABLE IF NOT EXISTS user_contacts (
     secondId INTEGER REFERENCES users(userId) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     -- invited | friends | refused | blocked
-    contactStatus VARCHAR(32) NOT NULL
+    contactStatus VARCHAR(8) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,
     userId INTEGER REFERENCES users(userId) NOT NULL,
     msg VARCHAR(255) NOT NULL,
-    is_read BOOLEAN DEFAULT FALSE
+    seen BOOLEAN DEFAULT FALSE
 )
