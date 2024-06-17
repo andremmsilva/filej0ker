@@ -7,7 +7,10 @@ import {
   AuthResponseDto,
   RegisterRequestDTO,
 } from '../../src/users/dto/auth.dto';
-import { AddContactRequestDto } from '../../src/contacts/dto/contacts.dto';
+import {
+  AddContactRequestDto,
+  RespondToContactRequestDto,
+} from '../../src/contacts/dto/contacts.dto';
 
 describe('contacts', () => {
   let app: Express;
@@ -112,5 +115,58 @@ describe('contacts', () => {
         target_user_role: targetContact.user.user_role,
       });
     }
+  });
+
+  test('invite target, accept & verify the changes', async () => {
+    const inviteData: AddContactRequestDto = {
+      email: targetContact.user.email,
+    };
+    const acceptData: RespondToContactRequestDto = {
+      action: 'accept',
+    };
+
+    let response = await request(app)
+      .post('/contacts/requests')
+      .set({
+        accept: 'application/json',
+        authorization: `Bearer ${user.auth.accessToken}`,
+      })
+      .send(inviteData);
+
+    expect(response.status).toEqual(201);
+
+    response = await request(app)
+      .post('/contacts/requests/1')
+      .set({
+        accept: 'application/json',
+        authorization: `Bearer ${targetContact.auth.accessToken}`,
+      })
+      .send(acceptData);
+    
+    expect(response.status).toEqual(200);
+
+    response = await request(app)
+      .get('/contacts')
+      .set({
+        accept: 'application/json',
+        authorization: `Bearer ${targetContact.auth.accessToken}`,
+      });
+
+    expect(response.status).toEqual(200);
+    expect(response.body[0]).toMatchObject({
+      id: 1,
+      createdat: expect.any(String),
+      contactstatus: 'friends',
+      sender_id: 1,
+      sender_full_name: user.user.full_name,
+      sender_email: user.user.email,
+      sender_user_name: user.user.user_name,
+      sender_user_role: user.user.user_role,
+      target_id: 2,
+      target_full_name: targetContact.user.full_name,
+      target_email: targetContact.user.email,
+      target_user_name: targetContact.user.user_name,
+      target_user_role: targetContact.user.user_role,
+    });
   });
 });

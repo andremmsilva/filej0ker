@@ -1,23 +1,35 @@
 import { NextFunction, Request, Response } from 'express';
 import { AppError } from '../../errors/appError';
 import { UserService } from '../../users/data/users.data';
-import {
-  AddContactStrategyFactory,
-} from '../data/addContactStrategy';
+import { AddContactStrategyFactory } from '../data/addContactStrategy';
 import { ContactService } from '../data/contacts.service';
 import {
   AddContactRequestDto,
   ContactResponseDto,
-  IRespondContactRequestBody,
-  IRespondContactRequestParams,
+  RespondToContactRequestDto,
+  RespondToContactRequestParams,
 } from '../dto/contacts.dto';
+import { RespondToContactStrategyFactory } from '../data/respondToContactStrategy';
 
 export async function getContacts(
   req: Request,
-  res: Response,
+  res: Response<ContactResponseDto[]>,
   next: NextFunction
 ) {
-  throw new Error('Not implemented');
+  const userQuery = await UserService.findByEmail(req.user!.email);
+  if (userQuery.length !== 1) {
+    next(new AppError('User not found', 403));
+  }
+
+  try {
+    const result = await ContactService.getContacts(
+      userQuery[0].user_id,
+      'friends'
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 }
 
 export async function getContactRequests(
@@ -31,8 +43,9 @@ export async function getContactRequests(
   }
 
   try {
-    const result = await ContactService.getContactRequests(
-      userQuery[0].user_id
+    const result = await ContactService.getContacts(
+      userQuery[0].user_id,
+      'invited'
     );
     res.status(200).json(result);
   } catch (error) {
@@ -75,14 +88,41 @@ export async function sendContactRequest(
 }
 
 export async function respondToContactRequest(
-  req: Request<IRespondContactRequestParams, {}, IRespondContactRequestBody>,
+  req: Request<RespondToContactRequestParams, {}, RespondToContactRequestDto>,
   res: Response,
   next: NextFunction
 ) {
-  const contactReqId = req.params.reqId;
+  const contactReqId = parseInt(req.params.reqId);
+  if (Number.isNaN(contactReqId)) {
+    next(new AppError('Contact request not found', 403));
+  }
   const userQuery = await UserService.findByEmail(req.user!.email);
   if (userQuery.length !== 1) {
     next(new AppError('User not found', 403));
+  }
+
+  const contactQuery = await ContactService.findById(contactReqId);
+  if (contactQuery.length !== 1) {
+    next(new AppError('Contact request not found', 403));
+  }
+
+  if (contactQuery[0].contactstatus !== 'invited') {
+    next(
+      new AppError(
+        "You can't respond to an already accepted or blocked invite",
+        400
+      )
+    );
+  }
+
+  const action = req.body.action;
+  try {
+    await ContactService.respondToContactRequest(
+      RespondToContactStrategyFactory.makeStrategy(action, contactReqId)
+    );
+    res.status(200).json({ success: true });
+  } catch (error) {
+    next(error);
   }
 }
 

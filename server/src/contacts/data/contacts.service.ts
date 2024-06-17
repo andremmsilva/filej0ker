@@ -1,7 +1,8 @@
 import { AppError } from '../../errors/appError';
 import { pool } from '../../middleware/db';
-import { ContactRequestSQL, ContactResponseDto } from '../dto/contacts.dto';
+import { ContactRequestSQL, ContactResponseDto, ContactStatus } from '../dto/contacts.dto';
 import { AddContactStrategy } from './addContactStrategy';
+import { RespondToContactStrategy } from './respondToContactStrategy';
 
 export class ContactService {
   static async findById(id: number): Promise<ContactRequestSQL[]> {
@@ -41,8 +42,15 @@ export class ContactService {
     strategy.execute();
   }
 
-  static async getContactRequests(
-    userId: number
+  static async respondToContactRequest(
+    strategy: RespondToContactStrategy
+  ): Promise<void> {
+    strategy.execute();
+  }
+
+  static async getContacts(
+    userId: number,
+    status: ContactStatus
   ): Promise<ContactResponseDto[]> {
     try {
       const response = await pool.query<ContactResponseDto>(
@@ -62,7 +70,7 @@ export class ContactService {
         JOIN users t ON t.user_id=cr.secondid
         WHERE (firstId=$1 OR secondId=$1) AND contactStatus=$2;
         `,
-        [userId, 'invited']
+        [userId, status]
       );
       return response.rows;
     } catch (error) {

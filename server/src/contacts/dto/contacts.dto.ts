@@ -1,17 +1,19 @@
-import { IsString } from 'class-validator';
+import { IsNumberString, IsString, Matches } from 'class-validator';
+
+export type ContactStatus = 'invited' | 'friends' | 'refused' | 'blocked';
 
 export type ContactRequestSQL = {
   id: number;
   firstid: number;
   secondid: number;
   createdat: Date;
-  contactstatus: 'invited' | 'friends' | 'refused' | 'blocked';
+  contactstatus: ContactStatus;
 };
 
 export type ContactResponseDto = {
   id: number;
   createdat: Date;
-  contactstatus: 'invited' | 'friends' | 'refused' | 'blocked';
+  contactstatus: ContactStatus;
   sender_id: number;
   sender_full_name: string;
   sender_email: string;
@@ -29,10 +31,15 @@ export class AddContactRequestDto {
   email!: string;
 }
 
-export interface IRespondContactRequestParams {
-  reqId: number;
+export class RespondToContactRequestParams {
+  @IsNumberString()
+  reqId!: string;
 }
 
-export interface IRespondContactRequestBody {
-  action: 'accept' | 'refuse' | 'block';
+export type RespondToContactAction = 'accept' | 'refuse' | 'block';
+
+export class RespondToContactRequestDto {
+  @IsString()
+  @Matches(/^(accept|refuse|block)$/)
+  action!: RespondToContactAction;
 }
