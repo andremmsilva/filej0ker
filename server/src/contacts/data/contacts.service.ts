@@ -3,8 +3,40 @@ import { pool } from '../../middleware/db';
 import { ContactRequestSQL, ContactResponseDto } from '../dto/contacts.dto';
 import { AddContactStrategy } from './addContactStrategy';
 
-
 export class ContactService {
+  static async findById(id: number): Promise<ContactRequestSQL[]> {
+    try {
+      const response = await pool.query<ContactRequestSQL>(
+        `SELECT * FROM contact_requests
+        WHERE id=$1;
+        `,
+        [id]
+      );
+      return response.rows;
+    } catch (error) {
+      console.error(error);
+      throw new AppError('Error getting contact by id from database', 500);
+    }
+  }
+
+  static async findBySenderReceiver(
+    sender_id: number,
+    receiver_id: number
+  ): Promise<ContactRequestSQL[]> {
+    try {
+      const response = await pool.query<ContactRequestSQL>(
+        `SELECT * FROM contact_requests
+        WHERE firstId=$1 AND secondId=$2;
+        `,
+        [sender_id, receiver_id]
+      );
+      return response.rows;
+    } catch (error) {
+      console.error(error);
+      throw new AppError('Error getting contact invites from database', 500);
+    }
+  }
+
   static async addContactRequest(strategy: AddContactStrategy): Promise<void> {
     strategy.execute();
   }
@@ -31,24 +63,6 @@ export class ContactService {
         WHERE (firstId=$1 OR secondId=$1) AND contactStatus=$2;
         `,
         [userId, 'invited']
-      );
-      return response.rows;
-    } catch (error) {
-      console.error(error);
-      throw new AppError('Error getting contact invites from database', 500);
-    }
-  }
-
-  static async getContact(
-    sender_id: number,
-    receiver_id: number
-  ): Promise<ContactRequestSQL[]> {
-    try {
-      const response = await pool.query<ContactRequestSQL>(
-        `SELECT * FROM contact_requests
-        WHERE firstId=$1 AND secondId=$2;
-        `,
-        [sender_id, receiver_id]
       );
       return response.rows;
     } catch (error) {

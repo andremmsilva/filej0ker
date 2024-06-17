@@ -55,7 +55,7 @@ export async function sendContactRequest(
     next(new AppError('Target contact not found', 400));
   }
 
-  const previousContacts = await ContactService.getContact(
+  const previousContacts = await ContactService.findBySenderReceiver(
     userQuery[0].user_id,
     targetQuery[0].user_id
   );
