@@ -12,3 +12,7 @@ export class AddContactRequestDto {
   @IsString()
   email!: string;
 }
+
+export interface IRespondContactRequestParams {
+  reqId: number;
+}

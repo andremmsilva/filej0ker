@@ -1,10 +1,30 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../../users/data/users.data';
-import { AddContactRequestDto } from '../dto/contacts.dto';
+import {
+  AddContactRequestDto,
+  IRespondContactRequestParams,
+} from '../dto/contacts.dto';
 import { AppError } from '../../errors/appError';
 import { ContactService } from '../data/contacts.data';
 
-export async function addContact(
+
+export async function getContacts(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  throw new Error('Not implemented');
+}
+
+export async function getContactRequests(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  throw new Error('Not implemented');
+}
+
+export async function sendContactRequest(
   req: Request<{}, {}, AddContactRequestDto>,
   res: Response,
   next: NextFunction
@@ -25,6 +45,14 @@ export async function addContact(
   } catch (error) {
     next(error);
   }
+}
+
+export async function respondToContactRequest(
+  req: Request<IRespondContactRequestParams>,
+  res: Response,
+  next: NextFunction
+) {
+  throw new Error('Not implemented');
 }
 
 export async function blockContact(
