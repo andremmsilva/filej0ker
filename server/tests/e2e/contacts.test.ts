@@ -15,6 +15,14 @@ describe('contacts', () => {
 
   beforeAll(async () => {
     app = createApp();
+  });
+
+  afterAll(async () => {
+    await truncateAndReset();
+    await pool.end();
+  });
+
+  beforeEach(async () => {
     await truncateAndReset();
 
     const userData: RegisterRequestDTO = {
@@ -46,17 +54,12 @@ describe('contacts', () => {
     targetContact = response.body as AuthResponseDto;
   });
 
-  afterAll(async () => {
-    await truncateAndReset();
-    await pool.end();
-  });
-
   test('invite target to contacts', async () => {
     const reqData: AddContactRequestDto = {
       email: targetContact.user.email,
     };
     const response = await request(app)
-      .post('/contacts')
+      .post('/contacts/requests')
       .set({
         accept: 'application/json',
         authorization: `Bearer ${user.auth.accessToken}`,
@@ -65,5 +68,23 @@ describe('contacts', () => {
 
     expect(response.status).toEqual(201);
     expect(response.body).toHaveProperty('success');
+  });
+
+  test('see invites after addition', async () => {
+    const response = await request(app)
+      .get('/contacts/invites')
+      .set({
+        accept: 'application/json',
+        authorization: `Bearer ${user.auth.accessToken}`,
+      });
+
+    expect(response.status).toEqual(200);
+    expect(response.body).toMatchObject({
+      id: 1,
+      firstId: 1,
+      secondId: 2,
+      createdAt: expect.any(String),
+      contactStatus: 'invited',
+    });
   });
 });
