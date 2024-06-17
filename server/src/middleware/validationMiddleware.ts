@@ -2,7 +2,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 import { Request, Response, NextFunction } from 'express';
 
-function validationMiddleware<T>(
+function validationMiddleware(
   type: any
 ): (req: Request, res: Response, next: NextFunction) => void {
   return (req, res, next) => {
