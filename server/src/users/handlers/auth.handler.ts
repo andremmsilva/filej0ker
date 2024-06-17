@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
 import {
-  BaseAuthResponse,
+  AuthResponseDto,
   LoginRequestDTO,
   RegisterRequestDTO,
   UserSQL,
@@ -13,7 +13,7 @@ import { generateAccessToken, generateRefreshToken } from '../../utils/tokens';
 
 export async function handleLogin(
   req: Request<{}, {}, LoginRequestDTO>,
-  res: Response<BaseAuthResponse>,
+  res: Response<AuthResponseDto>,
   next: NextFunction
 ) {
   try {
@@ -65,7 +65,7 @@ export function handleLogout(req: Request, res: Response) {
 
 export async function handleSignup(
   req: Request<{}, {}, RegisterRequestDTO>,
-  res: Response<BaseAuthResponse>,
+  res: Response<AuthResponseDto>,
   next: NextFunction
 ) {
   try {
@@ -89,7 +89,7 @@ export async function handleSignup(
         }
 
         try {
-          const result = await pool.query(
+          const result = await pool.query<UserSQL>(
             'INSERT INTO users \
           (fullName, email, username, passwordHash, userRole, active) \
           VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
@@ -109,12 +109,12 @@ export async function handleSignup(
               refreshToken: generateRefreshToken(result.rows[0].email),
             },
             user: {
-              userId: result.rows[0].userId,
+              userId: result.rows[0].userid,
               email: result.rows[0].email,
               username: result.rows[0].username,
-              fullName: result.rows[0].fullName,
-              createdAt: result.rows[0].createdAt,
-              userRole: result.rows[0].userRole,
+              fullName: result.rows[0].fullname,
+              createdAt: result.rows[0].createdat,
+              userRole: result.rows[0].userrole,
               active: result.rows[0].active,
             },
           });
