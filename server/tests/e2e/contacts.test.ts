@@ -70,21 +70,39 @@ describe('contacts', () => {
     expect(response.body).toHaveProperty('success');
   });
 
-  test('see invites after addition', async () => {
-    const response = await request(app)
-      .get('/contacts/invites')
+  test('invite target and confirm both can get the invite info', async () => {
+    const reqData: AddContactRequestDto = {
+      email: targetContact.user.email,
+    };
+    let response = await request(app)
+      .post('/contacts/requests')
       .set({
         accept: 'application/json',
         authorization: `Bearer ${user.auth.accessToken}`,
-      });
+      })
+      .send(reqData);
 
-    expect(response.status).toEqual(200);
-    expect(response.body).toMatchObject({
-      id: 1,
-      firstId: 1,
-      secondId: 2,
-      createdAt: expect.any(String),
-      contactStatus: 'invited',
-    });
+    expect(response.status).toEqual(201);
+
+    // Both the user and the targetContact should have the same results
+    const usersToCheck = [user, targetContact];
+    for (let i = 0; i < usersToCheck.length; i++) {
+      const element = usersToCheck[i];
+      response = await request(app)
+        .get('/contacts/requests')
+        .set({
+          accept: 'application/json',
+          authorization: `Bearer ${element.auth.accessToken}`,
+        });
+
+      expect(response.status).toEqual(200);
+      expect(response.body.result[0]).toMatchObject({
+        id: 1,
+        firstid: 1,
+        secondid: 2,
+        createdat: expect.any(String),
+        contactstatus: 'invited',
+      });
+    }
   });
 });
