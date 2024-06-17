@@ -5,9 +5,15 @@ import { JwtPayload, verify } from 'jsonwebtoken';
 declare global {
   namespace Express {
     interface Request {
-      user?: JwtPayload;
+      user?: JwtPayload & { email: string };
     }
   }
+}
+
+function isJwtPayloadWithEmail(
+  user: any
+): user is JwtPayload & { email: string } {
+  return user && typeof user.email === 'string';
 }
 
 export function authenticateToken(
@@ -18,9 +24,15 @@ export function authenticateToken(
   const token = req.headers['authorization']?.split(' ')[1];
   if (!token) return res.sendStatus(401);
 
-  verify(token, process.env.JWT_SECRET!, (err, user) => {
+  verify(token, process.env.JWT_SECRET!, (err, decoded) => {
     if (err) return res.sendStatus(403);
-    req.user = user as JwtPayload;
+
+    if (isJwtPayloadWithEmail(decoded)) {
+      req.user = decoded;
+    } else {
+      return res.status(401).json({ message: 'Invalid token structure' });
+    }
+
     next();
   });
 }
