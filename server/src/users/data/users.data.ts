@@ -16,13 +16,16 @@ export class UserService {
   }
 
   static async findByEmail(
-    email: string,
-    errStatusCode: number = 403
+    email: string
   ): Promise<UserSQL[]> {
-    const result = await pool.query<UserSQL>(
-      'SELECT * FROM users WHERE email=$1',
-      [email]
-    );
-    return result.rows;
+    try {
+      const result = await pool.query<UserSQL>(
+        'SELECT * FROM users WHERE email=$1',
+        [email]
+      );
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
   }
 }
