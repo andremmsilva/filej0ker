@@ -1,4 +1,4 @@
-import { IsEmail, IsString, Length } from "class-validator";
+import { IsEmail, IsString, Length, Matches } from 'class-validator';
 
 export type UserSQL = {
   userid: number;
@@ -9,7 +9,7 @@ export type UserSQL = {
   createdat: Date;
   userrole: string;
   active: boolean;
-}
+};
 
 abstract class BaseUserRequest {
   @IsEmail()
@@ -25,10 +25,18 @@ export class LoginRequestDTO extends BaseUserRequest {
 export class RegisterRequestDTO extends LoginRequestDTO {
   @IsString()
   @Length(3, 32)
+  @Matches(/^[a-zA-Z0-9\-\_\.]+$/, {
+    message:
+      'Username must be 3-32 characters long and can contain letters, digits, hyphens, underscores, and periods.',
+  })
   username!: string;
 
   @IsString()
   @Length(5, 255)
+  @Matches(/^[\p{L} ]+$/u, {
+    message:
+      'Full name must be 5-255 characters long and can contain only letters and spaces, including Latin characters.',
+  })
   fullName!: string;
 }
 
@@ -47,7 +55,7 @@ export class BaseJWTResponse {
   refreshToken!: string;
 }
 
-export class BaseAuthResponse {
+export class AuthResponseDto {
   user!: BaseUserResponse;
   auth!: BaseJWTResponse;
 }
