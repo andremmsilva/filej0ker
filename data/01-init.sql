@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     active BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE IF NOT EXISTS user_contacts (
+CREATE TABLE IF NOT EXISTS contact_requests (
     id SERIAL PRIMARY KEY,
     firstId INTEGER REFERENCES users(userId) NOT NULL,
     secondId INTEGER REFERENCES users(userId) NOT NULL,
