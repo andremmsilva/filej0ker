@@ -1,11 +1,11 @@
 import { IsString } from 'class-validator';
 
-export type ContactSQL = {
+export type ContactRequestSQL = {
   id: number;
-  firstId: number;
-  secondId: number;
-  createdAt: Date;
-  contactStatus: "invited" | "friends" | "refused" | "blocked";
+  firstid: number;
+  secondid: number;
+  createdat: Date;
+  contactstatus: "invited" | "friends" | "refused" | "blocked";
 };
 
 export class AddContactRequestDto {
