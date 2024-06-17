@@ -96,12 +96,20 @@ describe('contacts', () => {
         });
 
       expect(response.status).toEqual(200);
-      expect(response.body.result[0]).toMatchObject({
+      expect(response.body[0]).toMatchObject({
         id: 1,
-        firstid: 1,
-        secondid: 2,
         createdat: expect.any(String),
         contactstatus: 'invited',
+        sender_id: 1,
+        sender_full_name: user.user.full_name,
+        sender_email: user.user.email,
+        sender_user_name: user.user.user_name,
+        sender_user_role: user.user.user_role,
+        target_id: 2,
+        target_full_name: targetContact.user.full_name,
+        target_email: targetContact.user.email,
+        target_user_name: targetContact.user.user_name,
+        target_user_role: targetContact.user.user_role,
       });
     }
   });

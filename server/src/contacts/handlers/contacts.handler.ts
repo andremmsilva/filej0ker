@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../../users/data/users.data';
 import {
   AddContactRequestDto,
+  ContactResponseDto,
   IRespondContactRequestParams,
 } from '../dto/contacts.dto';
 import { AppError } from '../../errors/appError';
@@ -17,7 +18,7 @@ export async function getContacts(
 
 export async function getContactRequests(
   req: Request,
-  res: Response,
+  res: Response<ContactResponseDto[]>,
   next: NextFunction
 ) {
   const userQuery = await UserService.findByEmail(req.user!.email);
@@ -26,8 +27,8 @@ export async function getContactRequests(
   }
 
   try {
-    const result = await ContactService.getContactRequests(userQuery[0].userid);
-    res.status(200).json({ result: result });
+    const result = await ContactService.getContactRequests(userQuery[0].user_id);
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
@@ -50,8 +51,8 @@ export async function sendContactRequest(
 
   try {
     await ContactService.addContactRequest(
-      userQuery[0].userid,
-      targetQuery[0].userid
+      userQuery[0].user_id,
+      targetQuery[0].user_id
     );
     res.status(201).json({ success: true });
   } catch (error) {
