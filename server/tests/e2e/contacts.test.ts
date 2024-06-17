@@ -169,4 +169,46 @@ describe('contacts', () => {
       target_user_role: targetContact.user.user_role,
     });
   });
+
+  test('user sends invite, target blocks & verify user cant resend', async () => {
+    const inviteData: AddContactRequestDto = {
+      email: targetContact.user.email,
+    };
+    const acceptData: RespondToContactRequestDto = {
+      action: 'block',
+    };
+
+    // User sends invite
+    let response = await request(app)
+      .post('/contacts/requests')
+      .set({
+        accept: 'application/json',
+        authorization: `Bearer ${user.auth.accessToken}`,
+      })
+      .send(inviteData);
+
+    expect(response.status).toEqual(201);
+
+    // Block user
+    response = await request(app)
+      .post('/contacts/requests/1')
+      .set({
+        accept: 'application/json',
+        authorization: `Bearer ${targetContact.auth.accessToken}`,
+      })
+      .send(acceptData);
+    
+    expect(response.status).toEqual(200);
+
+    // Check that user can't resend invite
+    response = await request(app)
+      .post('/contacts/requests')
+      .set({
+        accept: 'application/json',
+        authorization: `Bearer ${user.auth.accessToken}`,
+      })
+      .send(inviteData);
+
+    expect(response.status).toEqual(403);
+  });
 });
