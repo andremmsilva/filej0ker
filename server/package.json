@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc --build",
     "start": "node ./dist/index.js",
-    "test": "jest",
-    "test:e2e": "jest --testPathPattern=tests/e2e",
+    "test": "jest --runInBand",
+    "test:e2e": "jest --testPathPattern=tests/e2e --runInBand",
     "dev": "nodemon --watch src ./src/index.ts"
   },
   "repository": {
