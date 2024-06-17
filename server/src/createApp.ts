@@ -1,8 +1,10 @@
-import express from "express";
-import { authRouter } from "./users/routes/auth.routes";
-import { verifyEnvs } from "./utils/env";
-import { loadEnv } from "./loadEnv";
-import { usersRouter } from "./users/routes/users.routes";
+import express from 'express';
+import { authRouter } from './users/routes/auth.routes';
+import { verifyEnvs } from './utils/env';
+import { loadEnv } from './loadEnv';
+import { usersRouter } from './users/routes/users.routes';
+import { contactsRouter } from './contacts/routes/contacts.routes';
+import { errorHandler } from './errors/handler';
 
 export function createApp() {
   loadEnv();
@@ -11,24 +13,10 @@ export function createApp() {
   app.use(express.json());
   app.use('/auth', authRouter);
   app.use('/users', usersRouter);
+  app.use('/contacts', contactsRouter);
 
   // Error handling middleware should be the last middleware
-  app.use(
-    (
-      err: any,
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction
-    ) => {
-      const statusCode = err.statusCode || 500;
-      const message = err.message || 'Internal Server Error';
-      res.status(statusCode).json({
-        status: 'error',
-        statusCode,
-        message,
-      });
-    }
-  );
+  app.use(errorHandler);
 
   return app;
 }
