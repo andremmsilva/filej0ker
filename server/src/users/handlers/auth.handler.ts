@@ -26,7 +26,7 @@ export async function handleLogin(
 
     bcrypt.compare(
       req.body.password,
-      queryResult.rows[0].passwordhash,
+      queryResult.rows[0].password_hash,
       (err, result) => {
         if (err) {
           throw err;
@@ -38,12 +38,12 @@ export async function handleLogin(
 
         res.status(200).json({
           user: {
-            userId: queryResult.rows[0].userid,
+            user_id: queryResult.rows[0].user_id,
             email: queryResult.rows[0].email,
-            username: queryResult.rows[0].username,
-            fullName: queryResult.rows[0].fullname,
-            createdAt: queryResult.rows[0].createdat,
-            userRole: queryResult.rows[0].userrole,
+            user_name: queryResult.rows[0].user_name,
+            full_name: queryResult.rows[0].full_name,
+            created_at: queryResult.rows[0].created_at,
+            user_role: queryResult.rows[0].user_role,
             active: queryResult.rows[0].active,
           },
           auth: {
@@ -71,7 +71,7 @@ export async function handleSignup(
   try {
     // Check for unique constraints
     const result = await pool.query(
-      'SELECT userId FROM users WHERE email=$1 OR username=$2',
+      'SELECT user_id FROM users WHERE email=$1 OR user_name=$2',
       [req.body.email, req.body.username]
     );
     if (result.rowCount! > 0) {
@@ -91,7 +91,7 @@ export async function handleSignup(
         try {
           const result = await pool.query<UserSQL>(
             'INSERT INTO users \
-          (fullName, email, username, passwordHash, userRole, active) \
+          (full_name, email, user_name, password_hash, user_role, active) \
           VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
             [
               req.body.fullName,
@@ -109,12 +109,12 @@ export async function handleSignup(
               refreshToken: generateRefreshToken(result.rows[0].email),
             },
             user: {
-              userId: result.rows[0].userid,
+              user_id: result.rows[0].user_id,
               email: result.rows[0].email,
-              username: result.rows[0].username,
-              fullName: result.rows[0].fullname,
-              createdAt: result.rows[0].createdat,
-              userRole: result.rows[0].userrole,
+              user_name: result.rows[0].user_name,
+              full_name: result.rows[0].full_name,
+              created_at: result.rows[0].created_at,
+              user_role: result.rows[0].user_role,
               active: result.rows[0].active,
             },
           });

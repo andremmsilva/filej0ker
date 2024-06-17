@@ -1,13 +1,13 @@
 import { IsEmail, IsString, Length, Matches } from 'class-validator';
 
 export type UserSQL = {
-  userid: number;
-  fullname: string;
+  user_id: number;
+  full_name: string;
   email: string;
-  username: string;
-  passwordhash: string;
-  createdat: Date;
-  userrole: string;
+  user_name: string;
+  password_hash: string;
+  created_at: Date;
+  user_role: string;
   active: boolean;
 };
 
@@ -41,12 +41,12 @@ export class RegisterRequestDTO extends LoginRequestDTO {
 }
 
 export class BaseUserResponse {
-  userId!: number;
+  user_id!: number;
   email!: string;
-  username!: string;
-  fullName!: string;
-  createdAt!: Date;
-  userRole!: string;
+  user_name!: string;
+  full_name!: string;
+  created_at!: Date;
+  user_role!: string;
   active!: boolean;
 }
 

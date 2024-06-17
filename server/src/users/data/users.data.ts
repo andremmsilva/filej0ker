@@ -5,12 +5,12 @@ import { UserSQL, BaseUserResponse } from '../dto/auth.dto';
 export class UserService {
   static sqlToBaseUserResponse(user: UserSQL): BaseUserResponse {
     return {
-      userId: user.userid,
+      user_id: user.user_id,
       email: user.email,
-      username: user.username,
-      fullName: user.fullname,
-      createdAt: user.createdat,
-      userRole: user.userrole,
+      user_name: user.user_name,
+      full_name: user.full_name,
+      created_at: user.created_at,
+      user_role: user.user_role,
       active: user.active,
     };
   }

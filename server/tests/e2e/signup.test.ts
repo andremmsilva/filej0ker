@@ -34,12 +34,12 @@ describe('signup', () => {
       email: 'andre@test.com',
     };
     const expectedUser: BaseUserResponse = {
-      userId: expect.any(Number),
+      user_id: expect.any(Number),
       email: 'andre@test.com',
-      username: 'andremmsilva',
-      fullName: 'André Silva',
-      createdAt: expect.any(String),
-      userRole: 'Free',
+      user_name: 'andremmsilva',
+      full_name: 'André Silva',
+      created_at: expect.any(String),
+      user_role: 'Free',
       active: expect.any(Boolean),
     };
 
