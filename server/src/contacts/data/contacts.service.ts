@@ -39,13 +39,13 @@ export class ContactService {
   }
 
   static async addContactRequest(strategy: AddContactStrategy): Promise<void> {
-    strategy.execute();
+    await strategy.execute();
   }
 
   static async respondToContactRequest(
     strategy: RespondToContactStrategy
   ): Promise<void> {
-    strategy.execute();
+    await strategy.execute();
   }
 
   static async getContacts(
