@@ -3,8 +3,8 @@ import { AppError } from '../../errors/appError';
 import { UserService } from '../../users/data/users.data';
 import {
   AddContactStrategyFactory,
-  ContactService,
-} from '../data/contacts.data';
+} from '../data/addContactStrategy';
+import { ContactService } from '../data/contacts.service';
 import {
   AddContactRequestDto,
   ContactResponseDto,
@@ -79,7 +79,11 @@ export async function respondToContactRequest(
   res: Response,
   next: NextFunction
 ) {
-  throw new Error('Not implemented');
+  const contactReqId = req.params.reqId;
+  const userQuery = await UserService.findByEmail(req.user!.email);
+  if (userQuery.length !== 1) {
+    next(new AppError('User not found', 403));
+  }
 }
 
 export async function blockContact(
