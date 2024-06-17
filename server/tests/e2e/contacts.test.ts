@@ -21,7 +21,7 @@ describe('contacts', () => {
       username: 'andresilva',
       fullName: 'André Silva',
       password: 'password123',
-      email: 'a@t.c',
+      email: 'andre@test.com',
     };
 
     const targetData: RegisterRequestDTO = {
