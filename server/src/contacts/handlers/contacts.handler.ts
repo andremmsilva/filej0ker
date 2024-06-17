@@ -1,12 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
+import { AppError } from '../../errors/appError';
 import { UserService } from '../../users/data/users.data';
+import {
+  AddContactStrategyFactory,
+  ContactService,
+} from '../data/contacts.data';
 import {
   AddContactRequestDto,
   ContactResponseDto,
+  IRespondContactRequestBody,
   IRespondContactRequestParams,
 } from '../dto/contacts.dto';
-import { AppError } from '../../errors/appError';
-import { ContactService } from '../data/contacts.data';
 
 export async function getContacts(
   req: Request,
@@ -27,7 +31,9 @@ export async function getContactRequests(
   }
 
   try {
-    const result = await ContactService.getContactRequests(userQuery[0].user_id);
+    const result = await ContactService.getContactRequests(
+      userQuery[0].user_id
+    );
     res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -49,10 +55,18 @@ export async function sendContactRequest(
     next(new AppError('Target contact not found', 400));
   }
 
+  const previousContacts = await ContactService.getContact(
+    userQuery[0].user_id,
+    targetQuery[0].user_id
+  );
+
   try {
     await ContactService.addContactRequest(
-      userQuery[0].user_id,
-      targetQuery[0].user_id
+      AddContactStrategyFactory.makeStrategy(
+        userQuery[0].user_id,
+        targetQuery[0].user_id,
+        previousContacts
+      )
     );
     res.status(201).json({ success: true });
   } catch (error) {
@@ -61,7 +75,7 @@ export async function sendContactRequest(
 }
 
 export async function respondToContactRequest(
-  req: Request<IRespondContactRequestParams>,
+  req: Request<IRespondContactRequestParams, {}, IRespondContactRequestBody>,
   res: Response,
   next: NextFunction
 ) {

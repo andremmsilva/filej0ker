@@ -5,13 +5,13 @@ export type ContactRequestSQL = {
   firstid: number;
   secondid: number;
   createdat: Date;
-  contactstatus: "invited" | "friends" | "refused" | "blocked";
+  contactstatus: 'invited' | 'friends' | 'refused' | 'blocked';
 };
 
 export type ContactResponseDto = {
   id: number;
   createdat: Date;
-  contactstatus: "invited" | "friends" | "refused" | "blocked";
+  contactstatus: 'invited' | 'friends' | 'refused' | 'blocked';
   sender_id: number;
   sender_full_name: string;
   sender_email: string;
@@ -22,7 +22,7 @@ export type ContactResponseDto = {
   target_email: string;
   target_user_name: string;
   target_user_role: string;
-}
+};
 
 export class AddContactRequestDto {
   @IsString()
@@ -31,4 +31,8 @@ export class AddContactRequestDto {
 
 export interface IRespondContactRequestParams {
   reqId: number;
+}
+
+export interface IRespondContactRequestBody {
+  action: 'accept' | 'refuse' | 'block';
 }
