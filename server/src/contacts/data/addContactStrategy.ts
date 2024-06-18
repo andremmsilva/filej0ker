@@ -52,7 +52,18 @@ export class FriendsAddContactStategy extends AddContactStrategy {
 
 export class RefusedAddContactStategy extends AddContactStrategy {
   async execute(): Promise<void> {
-    return new EmptyAddContactStrategy(this.fromId, this.toId).execute();
+    try {
+      await pool.query(
+        `
+        UPDATE contact_requests
+        SET contactStatus=$1
+        WHERE firstId=$2 AND secondId=$3`,
+        ['invited', this.fromId, this.toId]
+      );
+    } catch (error) {
+      console.error(error);
+      throw new AppError('Error inviting contact in database', 500);
+    }
   }
 }
 
@@ -80,6 +91,7 @@ export class AddContactStrategyFactory {
         break;
       case 'refused':
         strategy = new RefusedAddContactStategy(fromId, toId);
+        break;
       default:
         throw new AppError('Error sending a contact request', 500);
     }
