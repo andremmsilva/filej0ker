@@ -1,22 +1,23 @@
+import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
 import {
-  BaseAuthResponse,
+  AuthResponseDto,
   LoginRequestDTO,
   RegisterRequestDTO,
-} from '../dtos/user.dto';
-import { pool } from '../middleware/db';
-import { AppError } from '../models/appError';
-import bcrypt from 'bcrypt';
-import { BCRYPT_SALT_ROUNDS } from '../utils/constants';
-import { generateAccessToken, generateRefreshToken } from '../utils/tokens';
+  UserSQL,
+} from '../dto/auth.dto';
+import { pool } from '../../middleware/db';
+import { AppError } from '../../errors/appError';
+import { BCRYPT_SALT_ROUNDS } from '../../utils/constants';
+import { generateAccessToken, generateRefreshToken } from '../../utils/tokens';
 
 export async function handleLogin(
   req: Request<{}, {}, LoginRequestDTO>,
-  res: Response<BaseAuthResponse>,
+  res: Response<AuthResponseDto>,
   next: NextFunction
 ) {
   try {
-    const queryResult = await pool.query('SELECT * FROM users WHERE email=$1', [
+    const queryResult = await pool.query<UserSQL>('SELECT * FROM users WHERE email=$1', [
       req.body.email,
     ]);
     if (!queryResult.rowCount || queryResult.rowCount === 0) {
@@ -37,12 +38,12 @@ export async function handleLogin(
 
         res.status(200).json({
           user: {
-            userId: queryResult.rows[0].user_id,
+            user_id: queryResult.rows[0].user_id,
             email: queryResult.rows[0].email,
-            userName: queryResult.rows[0].user_name,
-            fullName: queryResult.rows[0].full_name,
-            createdAt: queryResult.rows[0].created_at,
-            userRole: queryResult.rows[0].user_role,
+            user_name: queryResult.rows[0].user_name,
+            full_name: queryResult.rows[0].full_name,
+            created_at: queryResult.rows[0].created_at,
+            user_role: queryResult.rows[0].user_role,
             active: queryResult.rows[0].active,
           },
           auth: {
@@ -64,14 +65,14 @@ export function handleLogout(req: Request, res: Response) {
 
 export async function handleSignup(
   req: Request<{}, {}, RegisterRequestDTO>,
-  res: Response<BaseAuthResponse>,
+  res: Response<AuthResponseDto>,
   next: NextFunction
 ) {
   try {
     // Check for unique constraints
     const result = await pool.query(
       'SELECT user_id FROM users WHERE email=$1 OR user_name=$2',
-      [req.body.email, req.body.userName]
+      [req.body.email, req.body.username]
     );
     if (result.rowCount! > 0) {
       throw new AppError('Email or username are already registered!', 409);
@@ -88,14 +89,14 @@ export async function handleSignup(
         }
 
         try {
-          const result = await pool.query(
+          const result = await pool.query<UserSQL>(
             'INSERT INTO users \
           (full_name, email, user_name, password_hash, user_role, active) \
           VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
             [
               req.body.fullName,
               req.body.email,
-              req.body.userName,
+              req.body.username,
               hash,
               'Free',
               true,
@@ -108,12 +109,12 @@ export async function handleSignup(
               refreshToken: generateRefreshToken(result.rows[0].email),
             },
             user: {
-              userId: result.rows[0].user_id,
+              user_id: result.rows[0].user_id,
               email: result.rows[0].email,
-              userName: result.rows[0].user_name,
-              fullName: result.rows[0].full_name,
-              createdAt: result.rows[0].created_at,
-              userRole: result.rows[0].user_role,
+              user_name: result.rows[0].user_name,
+              full_name: result.rows[0].full_name,
+              created_at: result.rows[0].created_at,
+              user_role: result.rows[0].user_role,
               active: result.rows[0].active,
             },
           });

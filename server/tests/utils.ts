@@ -4,7 +4,7 @@ export async function truncateAndReset() {
   const client = await pool.connect();
 
   try {
-    console.log(
+    console.debug(
       `Truncating all tables and resetting sequences in the ${process.env.NODE_ENV} database...`
     );
 
@@ -75,7 +75,7 @@ export async function truncateAndReset() {
 
     await client.query('COMMIT');
 
-    console.log('All tables truncated and sequences reset successfully.');
+    console.debug('All tables truncated and sequences reset successfully.');
   } catch (err) {
     await client.query('ROLLBACK');
     console.error('Error during truncation and reset:', err);
