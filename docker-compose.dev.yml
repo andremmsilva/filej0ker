@@ -35,3 +35,24 @@ services:
       - EXPRESS_PORT=5000
       - NODE_ENV=development
       - POSTGRES_URL=postgres://postgres:postgres@db:5432/fjdb
+  
+  web:
+    build:
+      context: ./web
+      target: development
+    container_name: filej0ker-dev-web
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - db
+    develop:
+      watch:
+        - action: rebuild
+          path: ./web/package.json
+        - action: sync
+          path: ./web
+          target: /app
+    environment:
+      - NODE_ENV=development
