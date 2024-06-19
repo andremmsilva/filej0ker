@@ -56,3 +56,4 @@ services:
           target: /app
     environment:
       - NODE_ENV=development
+      - VITE_API_URL=http://localhost:5000/

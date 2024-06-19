@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <AppNavbar />
     <v-main>
       <router-view />
     </v-main>
@@ -9,11 +10,12 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted } from "vue";
 import { useTheme } from "vuetify";
+import AppNavbar from "@/components/AppNavbar.vue";
 
 const theme = useTheme();
 
 const callback = (obj: { matches: boolean }) => {
-  theme.global.name.value = obj.matches ? "dark" : "light";
+  theme.global.name.value = obj.matches ? "customDark" : "customLight";
 };
 
 onMounted(() => {

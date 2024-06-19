@@ -5,12 +5,14 @@ import { loadEnv } from './loadEnv';
 import { usersRouter } from './users/routes/users.routes';
 import { contactsRouter } from './contacts/routes/contacts.routes';
 import { errorHandler } from './errors/handler';
+import cors from 'cors';
 
 export function createApp() {
   loadEnv();
   verifyEnvs();
   const app = express();
   app.use(express.json());
+  app.use(cors())
   app.use('/auth', authRouter);
   app.use('/users', usersRouter);
   app.use('/contacts', contactsRouter);
