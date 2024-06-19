@@ -1,11 +1,16 @@
 <script lang="ts" setup>
-import {ref} from "vue";
+import {inject, ref} from "vue";
 import {AuthResult, AuthService} from "@/services/authService";
+import FormErrorAlert from "@/components/FormErrorAlert.vue";
+import {useRouter} from "vue-router";
 
 const valid = ref(false);
 const email = ref('');
 const password = ref('');
 const error = ref('');
+
+const refreshAuthState = inject("refreshAuthState") as () => void;
+const router = useRouter();
 
 const emailRules = [
   (value?: string) => value ? true : "Email is required",
@@ -24,21 +29,17 @@ async function onLogin() {
   const result: AuthResult = await AuthService.login({email: email.value, password: password.value});
   if (!result.success) {
     error.value = result.error;
+    return;
   }
+
+  refreshAuthState();
+  await router.replace("/");
 }
 </script>
 
 <template>
   <v-sheet :elevation="2" :max-width="600" class="mt-16 mx-auto text-center pa-4" rounded="lg" width="95%">
-    <v-alert
-      class="text-left"
-      v-if="error.length > 0"
-      closable
-      variant="tonal"
-      :text="error"
-      title="Login Error"
-      type="error"
-    ></v-alert>
+    <FormErrorAlert :text="error" title="Error logging in"/>
     <h2 class="text-h2 font-weight-medium mt-4 mb-8">Login</h2>
     <v-form v-model="valid" class="my-4" @submit.prevent="onLogin">
       <v-text-field

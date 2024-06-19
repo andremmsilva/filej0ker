@@ -1,3 +1,136 @@
+<script lang="ts" setup>
+import {inject, ref} from "vue";
+import {AuthResult, AuthService} from "@/services/authService";
+import FormErrorAlert from "@/components/FormErrorAlert.vue";
+import {useRouter} from "vue-router";
+
+const valid = ref(false);
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const username = ref('');
+const fullName = ref('');
+const error = ref('');
+
+const refreshAuthState = inject("refreshAuthState") as () => void;
+const router = useRouter();
+
+const emailRules = [
+  (value?: string) => value ? true : "Email is required",
+  (value?: string) => {
+    const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    return value?.match(emailRegex) ? true : "Invalid email address";
+  }
+];
+const passwordRules = [
+  (value?: string) => value ? true : "Password is required",
+  (value?: string) => value && value.length > 8 ? true : "Password must contain at least 8 characters",
+];
+const confirmPasswordRules = [
+  (value?: string) => value && value === password.value ? true : "Passwords must match",
+];
+const usernameRules = [
+  (value?: string) => value ? true : "Username is required",
+  (value?: string) => {
+    const usernameRegex = /^(?=.{6,20}$)(?![_.-])(?!.*[_.-]{2})[a-zA-Z0-9._-]+(?<![_.-])$/;
+    return value?.match(usernameRegex) ? true : "Username should be 6-20 characters and consist of letters, numbers, underscores and periods.";
+  }
+];
+const fullNameRules = [
+  (value?: string) => value ? true : "Full name is required",
+  (value?: string) => {
+    const fullNameRegex = /^\S[\p{L}\s]*\S$/u;
+    return value?.match(fullNameRegex) ? true : "Invalid full name.";
+  }
+];
+
+async function onSignUp() {
+  if (!valid.value) return;
+  const result: AuthResult = await AuthService.signup({
+    fullName: fullName.value,
+    username: username.value,
+    email: email.value,
+    password: password.value
+  });
+
+  if (!result.success) {
+    error.value = result.error;
+    return;
+  }
+
+  refreshAuthState();
+  await router.replace("/");
+}
+</script>
+
 <template>
-  Sign up
+  <v-sheet :elevation="2" :max-width="600" class="mt-16 mx-auto text-center pa-4" rounded="lg" width="95%">
+    <FormErrorAlert :text="error" title="Error signing up"/>
+
+    <h2 class="text-h2 font-weight-medium mt-4 mb-8">Sign up</h2>
+
+    <v-form v-model="valid" class="my-4" @submit.prevent="onSignUp">
+      <v-container>
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+              v-model="email"
+              :rules="emailRules"
+              clearable
+              label="Email"
+              placeholder="user@example.com"
+              type="email"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="6">
+            <v-text-field
+              v-model="password"
+              :rules="passwordRules"
+              label="Password"
+              type="password"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="confirmPassword"
+              :rules="confirmPasswordRules"
+              label="Confirm Password"
+              type="password"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="6">
+            <v-text-field
+              v-model="username"
+              :rules="usernameRules"
+              clearable
+              label="Username"
+              placeholder="awes0me_username"
+              type="text"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="fullName"
+              :rules="fullNameRules"
+              label="Full Name"
+              type="text"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-btn block class="mt-2" color="primary" type="submit">Submit</v-btn>
+    </v-form>
+    <v-container>
+      <v-row no-gutters>
+        <v-col class="text-left" cols="6">
+          <p class="text-body-2">Already have an account?</p>
+          <RouterLink class="text-primary font-weight-medium text-body-1" to="/login">Log in.</RouterLink>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-sheet>
 </template>

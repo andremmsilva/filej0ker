@@ -1,16 +1,19 @@
 <template>
   <v-app>
-    <AppNavbar />
-    <v-main>
-      <router-view />
-    </v-main>
+    <AuthProvider>
+      <AppNavbar/>
+      <v-main>
+        <router-view/>
+      </v-main>
+    </AuthProvider>
   </v-app>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted } from "vue";
-import { useTheme } from "vuetify";
+import {onMounted, onUnmounted} from "vue";
+import {useTheme} from "vuetify";
 import AppNavbar from "@/components/AppNavbar.vue";
+import AuthProvider from "@/components/providers/AuthProvider.vue";
 
 const theme = useTheme();
 
