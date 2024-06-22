@@ -28,6 +28,8 @@ services:
       watch:
         - action: rebuild
           path: ./server/package.json
+        - action: rebuild
+          path: ./server/.env.development
         - action: sync
           path: ./server
           target: /app
@@ -35,6 +37,7 @@ services:
       - EXPRESS_PORT=5000
       - NODE_ENV=development
       - POSTGRES_URL=postgres://postgres:postgres@db:5432/fjdb
+      - FRONTEND_URL=http://localhost:3000/
   
   web:
     build:
