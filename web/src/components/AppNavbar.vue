@@ -30,10 +30,9 @@ const authState: AuthStateType = inject('authState') as AuthStateType;
     <v-app-bar-title class="">
       <RouterLink
         class="text-decoration-none text-on-background text-h4 font-weight-bold"
-        to="/"
-      >filej0ker
-      </RouterLink
-      >
+        to="/">
+        filej0ker
+      </RouterLink>
     </v-app-bar-title>
 
     <template v-slot:append>
@@ -62,7 +61,7 @@ const authState: AuthStateType = inject('authState') as AuthStateType;
       </template>
       <template v-else>
         <v-container class="d-flex align-center flex-row no-gutters ga-4">
-          <p>{{ authState.user.user_name }}</p>
+          <p>{{ authState.user_name }}</p>
           <LogoutButton/>
         </v-container>
       </template>

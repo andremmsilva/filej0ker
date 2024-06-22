@@ -1,6 +1,7 @@
 // middleware/auth.js
 import type { NextFunction, Request, Response } from 'express';
-import { JwtPayload, verify } from 'jsonwebtoken';
+import { JwtPayload, verify, VerifyErrors } from 'jsonwebtoken';
+import { AppError } from '../errors/appError';
 
 declare global {
   namespace Express {
@@ -21,18 +22,36 @@ export function authenticateToken(
   res: Response,
   next: NextFunction
 ) {
-  const token = req.headers['authorization']?.split(' ')[1];
-  if (!token) return res.sendStatus(401);
+  const tokenInCookies =
+    req.url === '/refresh' ? req.cookies.refreshToken : req.cookies.accessToken;
 
-  verify(token, process.env.JWT_SECRET!, (err, decoded) => {
-    if (err) return res.sendStatus(403);
+  const token = req.headers['authorization']?.split(' ')[1] || tokenInCookies;
+  if (!token) {
+    return next(new AppError('No JWT provided', 401));
+  }
 
-    if (isJwtPayloadWithEmail(decoded)) {
+  const secret =
+    req.url === '/refresh'
+      ? process.env.JWT_REFRESH_SECRET!
+      : process.env.JWT_SECRET!;
+
+  verify(
+    token,
+    secret,
+    undefined,
+    (err: VerifyErrors | null, decoded: string | JwtPayload | undefined) => {
+      if (err) {
+        console.log('here', err);
+        return next(new AppError('JWT is invalid or expired', 403));
+      }
+
+      if (!isJwtPayloadWithEmail(decoded)) {
+        console.log('here2');
+        return next(new AppError('JWT is invalid or expired', 403));
+      }
+
       req.user = decoded;
-    } else {
-      return res.status(401).json({ message: 'Invalid token structure' });
+      next();
     }
-
-    next();
-  });
+  );
 }

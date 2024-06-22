@@ -12,7 +12,7 @@ export async function handleSearch(
   const query = req.body.query;
   try {
     const result = await pool.query<UserSQL>(
-      'SELECT * FROM users WHERE username ILIKE $1 OR email ILIKE $1',
+      'SELECT * FROM users WHERE user_name ILIKE $1 OR email ILIKE $1',
       [`%${query}%`]
     );
 

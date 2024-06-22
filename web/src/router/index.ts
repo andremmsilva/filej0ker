@@ -18,7 +18,7 @@ const publicPages = ['/login', '/signup'];
 
 router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
   const authRequired = !publicPages.includes(to.path);
-  const loggedIn = AuthService.getCurrentAuth() !== null;
+  const loggedIn = AuthService.getCurrentUser() !== null;
   if (authRequired && !loggedIn) {
     return next({path: '/login'});
   }

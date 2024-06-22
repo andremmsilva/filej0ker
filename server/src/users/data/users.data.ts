@@ -15,13 +15,45 @@ export class UserService {
     };
   }
 
-  static async findByEmail(
-    email: string
-  ): Promise<UserSQL[]> {
+  static async findByEmail(email: string): Promise<UserSQL[]> {
     try {
       const result = await pool.query<UserSQL>(
         'SELECT * FROM users WHERE email=$1',
         [email]
+      );
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async findByUsernameOrEmail(
+    email: string,
+    username: string
+  ): Promise<UserSQL[]> {
+    try {
+      const result = await pool.query<UserSQL>(
+        'SELECT * FROM users WHERE email=$1 OR user_name=$2',
+        [email, username]
+      );
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async addOne(
+    fullName: string,
+    email: string,
+    username: string,
+    passwordHash: string
+  ): Promise<UserSQL[]> {
+    try {
+      const result = await pool.query<UserSQL>(
+        'INSERT INTO users \
+      (full_name, email, user_name, password_hash, user_role, active) \
+      VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+        [fullName, email, username, passwordHash, 'Free', true]
       );
       return result.rows;
     } catch (error) {

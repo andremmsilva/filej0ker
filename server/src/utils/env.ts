@@ -23,4 +23,7 @@ export function verifyEnvs() {
   if (!process.env.JWT_REFRESH_EXPIRATION) {
     envError("JWT_REFRESH_EXPIRATION");
   }
+  if (!process.env.FRONTEND_URL) {
+    envError("FRONTEND_URL");
+  }
 }
